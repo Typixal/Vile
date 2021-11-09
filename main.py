@@ -8,7 +8,7 @@ from itertools import cycle
 from dotenv import load_dotenv
 # Intents
 intents = discord.Intents().all()
-client = commands.Bot(command_prefix='..', intents=intents)
+client = commands.Bot(command_prefix='>', intents=intents)
 status = cycle(['Vile | ..help', 'TypicalWolf'])
 load_dotenv()
 
