@@ -355,7 +355,7 @@ class Music(commands.Cog):
     async def _pause(self, ctx: commands.Context):
         """Pauses the currently playing song."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
