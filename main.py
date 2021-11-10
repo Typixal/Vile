@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # Intents
 intents = discord.Intents().all()
 client = commands.Bot(command_prefix='>', intents=intents)
-status = cycle(['Vile | ..help', 'TypicalWolf'])
+status = cycle(['Vile | >help', 'Night Vibe', 'TypicalWolf'])
 load_dotenv()
 
 @client.event
@@ -19,12 +19,12 @@ async def on_ready():
 
 
 @client.command()
-async def load(ct, extension):
+async def load(ctx, extension):
     client.load_extension(f'cogs.{extension}')
 
 
 @client.command()
-async def unload(ct, extension):
+async def unload(ctx, extension):
     client.unload_extension(f'cogs.{extension}')
 
 for filename in os.listdir('./cogs'):
