@@ -32,8 +32,9 @@ for filename in os.listdir('./cogs'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
 
-# @client.event
-# async def on_command_error(ctx, error):
+@client.event
+async def on_command_error(ctx, error):
+    pass
 #     if isinstance(error, commands.CommandNotFound):
 #         await ctx.send('That command is non-existent. Try ..help for a list of available commands!')
 
