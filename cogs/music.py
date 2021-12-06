@@ -237,13 +237,13 @@ class VoiceState:
                     self.exists = False
                     return
 
-                self.current.source.volume = self._volume
-                self.voice.play(self.current.source, after=self.play_next_song)
-                await self.current.source.channel.send(embed=self.current.create_embed())
+            self.current.source.volume = self._volume
+            self.voice.play(self.current.source, after=self.play_next_song)
+            await self.current.source.channel.send(embed=self.current.create_embed())
 
-            elif self.loop == True:
-                self.now == discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS)
-                self.voice.play(self.now, after=self.play_next_song)
+            # elif self.loop == True:
+            #     self.now == discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS)
+            #     self.voice.play(self.now, after=self.play_next_song)
 
 
             await self.next.wait()
