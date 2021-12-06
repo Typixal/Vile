@@ -224,7 +224,7 @@ class VoiceState:
         while True:
             self.next.clear()
 
-            if not self.loop:
+            if not self.loop == False:
                 # Try to get the next song within 3 minutes.
                 # If no song will be added to the queue in time,
                 # the player will disconnect due to performance
@@ -237,9 +237,14 @@ class VoiceState:
                     self.exists = False
                     return
 
-            self.current.source.volume = self._volume
-            self.voice.play(self.current.source, after=self.play_next_song)
-            await self.current.source.channel.send(embed=self.current.create_embed())
+                self.current.source.volume = self._volume
+                self.voice.play(self.current.source, after=self.play_next_song)
+                await self.current.source.channel.send(embed=self.current.create_embed())
+
+            elif self.loop == True:
+                self.now == discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS)
+                self.voice.play(self.now, after=self.play_next_song)
+
 
             await self.next.wait()
 
@@ -463,7 +468,7 @@ class Music(commands.Cog):
             return await ctx.send('Nothing being played at the moment.')
 
         # Inverse boolean value to loop and unloop.
-        ctx.voice_state.loop = ctx.voice_state.loop
+        ctx.voice_state.loop = not ctx.voice_state.loop
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='play', aliases=['p'])
