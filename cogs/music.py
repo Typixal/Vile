@@ -224,7 +224,7 @@ class VoiceState:
         while True:
             self.next.clear()
 
-            if not self.loop == False:
+            if not self.loop:
                 # Try to get the next song within 3 minutes.
                 # If no song will be added to the queue in time,
                 # the player will disconnect due to performance
