@@ -19,7 +19,7 @@ async def displayembed(ctx):
         discription='These are the bot music commands.',
         colour=discord.colour.blue()
     )
-
+    
     embed.set_footer(text='Hope you have a nice day!.')
     embed.set_image(
         url='https://cdn.discordapp.com/avatars/270904126974590976/d60c6bd5971f06776ba96497117f7f58.webp?size=4096')
@@ -58,3 +58,6 @@ async def displayembed(ctx):
         name='volume', value='Sets the volume of the player.', inline=True)
 
     await client.send_message(channel, embed=embed)
+
+def setup(client):
+    client.add_cog(displayembed(client))
