@@ -20,13 +20,12 @@ class Music(commands.Cog):
 
     @commands.command(pass_context=True)
     async def musichelp(self, ctx):
-        channel = ctx.message.channel
-        embed = discord.Embed(
+        #channel = ctx.message.channel
+        embed = (discord.Embed(
             title='Music',
-            discription='These are the bot music commands.',
+            description='These are the bot music commands.',
             colour=discord.colour.blue()
-        )
-
+        ))
         embed.set_footer(text='Hope you have a nice day!.')
         embed.set_image(
             url='https://cdn.discordapp.com/avatars/270904126974590976/d60c6bd5971f06776ba96497117f7f58.webp?size=4096')
@@ -67,7 +66,7 @@ class Music(commands.Cog):
         embed.add_field(
             name='volume', value='Sets the volume of the player.', inline=True)
 
-        await ctx.send(channel, embed=embed)
+        await ctx.send(embed=embed)
 
 
 def setup(client):
