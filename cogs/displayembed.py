@@ -11,13 +11,13 @@ from async_timeout import timeout
 from discord.ext import commands
 
 
-class Moderation(commands.Cog):
+class Help(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
     @commands.command(pass_context=True)
-    async def displayembed(ctx):
+    async def mhelp(self, ctx):
         channel = ctx.message.channel
         embed = discord.Embed(
             title='Music',
@@ -69,4 +69,4 @@ class Moderation(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Moderation(client))
+    client.add_cog(Help(client))
