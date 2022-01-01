@@ -10,14 +10,16 @@ import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
 
+from cogs.music import Music
 
-class Help(commands.Cog):
+
+class Music(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
     @commands.command(pass_context=True)
-    async def mhelp(self, ctx):
+    async def musichelp(self, ctx):
         channel = ctx.message.channel
         embed = discord.Embed(
             title='Music',
@@ -69,4 +71,4 @@ class Help(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Help(client))
+    client.add_cog(Music(client))
