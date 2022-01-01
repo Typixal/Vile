@@ -67,7 +67,7 @@ class Music(commands.Cog):
         embed.add_field(
             name='volume', value='Sets the volume of the player.', inline=True)
 
-        await client.send_message(channel, embed=embed)
+        await ctx.send(channel, embed=embed)
 
 
 def setup(client):
