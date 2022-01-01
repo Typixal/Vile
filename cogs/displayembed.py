@@ -10,7 +10,7 @@ import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
 
-from cogs.music import Music
+# from cogs.music import Music
 
 
 class Music(commands.Cog):
