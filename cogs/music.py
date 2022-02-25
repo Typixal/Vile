@@ -376,7 +376,7 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop')
-    # @commands.has_permissions(manage_guild=True)
+    @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
         """Stops playing song and clears the queue."""
 
@@ -388,6 +388,35 @@ class Music(commands.Cog):
 
     @commands.command(name='skip')
     # @commands.has_role(DJ=True)
+    async def _skip(self, ctx: commands.Context):
+        """Vote to skip a song. The requester can automatically skip.
+        3 skip votes are needed for the song to be skipped.
+        """
+
+        if not ctx.voice_state.is_playing:
+            return await ctx.send('Not playing any music right now...')
+
+        voter = ctx.message.author
+        if voter == ctx.voice_state.current.requester:
+            await ctx.message.add_reaction('⏭')
+            ctx.voice_state.skip()
+
+        elif voter.id not in ctx.voice_state.skip_votes:
+            ctx.voice_state.skip_votes.add(voter.id)
+            total_votes = len(ctx.voice_state.skip_votes)
+
+            if total_votes >= 3:
+                await ctx.message.add_reaction('⏭')
+                ctx.voice_state.skip()
+            else:
+                await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
+
+        else:
+            await ctx.send('You have already voted to skip this song.')
+
+    @commands.command(name='forceskip', aliases=['fs', 'adms'])
+    @commands.has_permissions(manage_guild=True)
+    @commands.has_role(DJ=True)
     async def _skip(self, ctx: commands.Context):
         """Vote to skip a song. The requester can automatically skip.
         3 skip votes are needed for the song to be skipped.
