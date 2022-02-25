@@ -415,8 +415,7 @@ class Music(commands.Cog):
             await ctx.send('You have already voted to skip this song.')
 
     @commands.command(name='forceskip', aliases=['fs', 'adms'])
-    @commands.has_permissions(manage_guild=True)
-    @commands.has_role(DJ=True)
+    @commands.has_permissions(administrator=True)
     async def _skip(self, ctx: commands.Context):
         """Vote to skip a song. The requester can automatically skip.
         3 skip votes are needed for the song to be skipped.
