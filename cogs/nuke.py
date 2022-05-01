@@ -13,7 +13,7 @@ class Dangerous_shit(commands.Cog):
     async def nuke(self, ctx):
         """Nuke the server..."""
         
-        await ctx.send("https://tenor.com/view/who-the-hell-do-you-think-youre-talking-to-dog-talking-who-do-you-think-you-are-gif-13502177")
+        await ctx.send("Developer Only CMD")
 
     
 def setup(client):
