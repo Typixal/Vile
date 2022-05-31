@@ -19,7 +19,7 @@ os.environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
 # Intents
 intents = nextcord.Intents().all()
 client = commands.Bot(command_prefix='--', intents=intents, help_command=None)
-status = cycle(['Tile | --help', 'Night Vibe',
+status = cycle(['Vile | >help', 'Night Vibe',
                'TypicalWolf', 'Cuties', 'Himiko Toga'])
 # load_dotenv()
 
