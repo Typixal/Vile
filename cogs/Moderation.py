@@ -66,7 +66,7 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
             # await ctx.send("You cant do that!", delete_after=5)
 
-    
+    @purge.error
     async def clear_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             embed = nextcord.Embed(
@@ -84,7 +84,7 @@ class Moderation(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-    
+    @ban.error
     async def ban_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             embed = nextcord.Embed(
@@ -103,7 +103,7 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
             # await ctx.send("Provide the username with the discriminator! Ex: Vile#1234")
 
-    
+    @unban.error
     async def unban_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
             embed = nextcord.Embed(
@@ -121,7 +121,7 @@ class Moderation(commands.Cog):
                 colour=(nextcord.Colour.random()), description=f"You dont have permissions to do that!")
             await ctx.send(embed=embed)
 
-    
+    @kick.error
     async def kick_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             embed = nextcord.Embed(
@@ -129,7 +129,7 @@ class Moderation(commands.Cog):
                 colour=(nextcord.Colour.random()), description=f"Mention the user to kick.")
             await ctx.send(embed=embed)
 
-    
+    @kick.error
     async def kick_error(self, ctx, error):
         if isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
