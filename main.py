@@ -10,8 +10,7 @@ from nextcord import Embed
 # from dotenv import load_dotenv
 import asyncio
 import aiohttp
-import wavelink
-from essentials.player import WebPlayer
+
 
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
 
