@@ -1,5 +1,5 @@
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 # This prevents staff members from being punished 
 class Sinner(commands.Converter):
@@ -33,7 +33,7 @@ class Moderation(commands.Cog):
         try: # Tries to ban user
             await ctx.guild.ban(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified")
             await ctx.send(f"{user.mention} was cast out of heaven for {reason}.")
-        except discord.Forbidden:
+        except nextcord.Forbidden:
             return await ctx.send("Are you trying to ban someone higher than the bot")
 
     @commands.command()
@@ -46,7 +46,7 @@ class Moderation(commands.Cog):
         try: # Tries to soft-ban user
             await ctx.guild.ban(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified") 
             await ctx.guild.unban(user, "Temporarily Banned")
-        except discord.Forbidden:
+        except nextcord.Forbidden:
             return await ctx.send("Are you trying to soft-ban someone higher than the bot?")
     
     
@@ -57,7 +57,7 @@ class Moderation(commands.Cog):
         
         try: # tries to kick user
             await ctx.guild.kick(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified") 
-        except discord.Forbidden:
+        except nextcord.Forbidden:
             return await ctx.send("Are you trying to kick someone higher than the bot?")
 
     @commands.command()
