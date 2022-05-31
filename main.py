@@ -18,7 +18,7 @@ os.environ["JISHAKU_NO_DM_TRACEBACK"] = "true"
 # from matplotlib.style import context
 # Intents
 intents = nextcord.Intents().all()
-client = commands.Bot(command_prefix='--', intents=intents, help_command=None)
+client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 status = cycle(['Vile | >help', 'Night Vibe',
                'TypicalWolf', 'Cuties', 'Himiko Toga'])
 # load_dotenv()
