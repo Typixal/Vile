@@ -67,8 +67,8 @@ class Sinner(commands.Converter):
 class Moderation(commands.Cog):
     """Commands used to moderate your guild"""
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, client):
+        self.client = client
 
     async def __error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
