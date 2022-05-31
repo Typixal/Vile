@@ -22,7 +22,7 @@ class Snipe(commands.Cog):
         snipe_message_content = None
 
     @commands.command()
-    @commands.has_role('Sniper')
+    @commands.has_role('Sniper', 'Admin', '<3', 'Admens', 'M0ds')
     async def snipe(self, message):
         if snipe_message_content == None:
             await message.channel.send("There's nothing to snipe....")
