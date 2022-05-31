@@ -181,8 +181,8 @@ class SongQueue(asyncio.Queue):
 
 
 class VoiceState:
-    def __init__(self, client: commands.client, ctx: commands.Context):
-        self.client = client
+    def __init__(self, bot: commands.Bot, ctx: commands.Context):
+        self.bot = bot
         self._ctx = ctx
         self.exists = True
 
@@ -195,7 +195,7 @@ class VoiceState:
         self._volume = 0.5
         self.skip_votes = set()
 
-        self.audio_player = client.loop.create_task(self.audio_player_task())
+        self.audio_player = bot.loop.create_task(self.audio_player_task())
 
     def __del__(self):
         self.audio_player.cancel()
@@ -233,7 +233,7 @@ class VoiceState:
                     async with timeout(180):  # 3 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
-                    self.client.loop.create_task(self.stop())
+                    self.bot.loop.create_task(self.stop())
                     self.exists = False
                     return
 
@@ -269,21 +269,21 @@ class VoiceState:
 
 
 class Music(commands.Cog):
-    def __init__(self, client: commands.client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
         self.voice_states = {}
 
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
         if not state or not state.exists:
-            state = VoiceState(self.client, ctx)
+            state = VoiceState(self.bot, ctx)
             self.voice_states[ctx.guild.id] = state
 
         return state
 
     def cog_unload(self):
         for state in self.voice_states.values():
-            self.client.loop.create_task(state.stop())
+            self.bot.loop.create_task(state.stop())
 
     def cog_check(self, ctx: commands.Context):
         if not ctx.guild:
@@ -312,7 +312,7 @@ class Music(commands.Cog):
     @commands.command(name='summon')
     @commands.has_permissions(manage_guild=True)
     async def _summon(self, ctx: commands.Context, *, channel: nextcord.VoiceChannel = None):
-        """Summons the client to a voice channel.
+        """Summons the bot to a voice channel.
         If no channel was specified, it joins your channel.
         """
 
@@ -513,7 +513,7 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.client.loop)
+                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
             except YTDLError as e:
                 await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
             else:
@@ -532,16 +532,16 @@ class Music(commands.Cog):
         if ctx.voice_client:
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError(
-                    'client is already in a voice channel.')
+                    'Bot is already in a voice channel.')
 
 
-# client = commands.client('music.', description='Yet another music client.')
-# client.add_cog(Music(client))
+# bot = commands.Bot('music.', description='Yet another music bot.')
+# bot.add_cog(Music(bot))
 
 
-# @client.event
+# @bot.event
 # async def on_ready():
-#     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(client))
+#     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 
 def setup(client):
