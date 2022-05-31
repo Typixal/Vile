@@ -155,5 +155,5 @@ class Moderation(commands.Cog):
         await ctx.set_permissions(user, send_messages=True)
 
 
-def setup(bot):
-    bot.add_cog(Moderation(bot))
+def setup(client):
+    client.add_cog(Moderation(client))
