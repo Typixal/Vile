@@ -36,42 +36,42 @@ class Moderation(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-    # @commands.command()
-    # @commands.has_permissions(administrator=True)
-    # async def unban(self, ctx, *, member):
-    #     banned_users = await ctx.guild.bans()
-    #     member_name, member_discriminator = member.split("#")
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def unban(self, ctx, *, member):
+        banned_users = await ctx.guild.bans()
+        member_name, member_discriminator = member.split("#")
 
-    #     for ban_entry in banned_users:
-    #         user = ban_entry.user
-    #         if (user.name, user.discriminator) == (member_name, member_discriminator):
-    #             await ctx.guild.unban(user)
-    #             embed = nextcord.Embed(
-    #                 title=("Unabanned"),
-    #                 colour=(nextcord.Colour.random()), description=f"{user.mention} has been unbanned!"
-    #             )
-    #             await ctx.send(embed=embed)
-    #             return
+        for ban_entry in banned_users:
+            user = ban_entry.user
+            if (user.name, user.discriminator) == (member_name, member_discriminator):
+                await ctx.guild.unban(user)
+                embed = nextcord.Embed(
+                    title=("Unabanned"),
+                    colour=(nextcord.Colour.random()), description=f"{user.mention} has been unbanned!"
+                )
+                await ctx.send(embed=embed)
+                return
 
-    # @unban.error
-    # async def unban_error(self, ctx, error):
-    #     if isinstance(error, commands.MissingRequiredArgument):
-    #         embed = nextcord.Embed(
-    #             title=("Missing Argument"),
-    #             colour=(nextcord.Colour.random()), description=f"Provide the username with the discriminator! Ex: Vile#1234"
-    #         )
-    #         await ctx.send(embed=embed)
-    #         # await ctx.send("Provide the username with the discriminator! Ex: Vile#1234")
+    @unban.error
+    async def unban_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = nextcord.Embed(
+                title=("Missing Argument"),
+                colour=(nextcord.Colour.random()), description=f"Provide the username with the discriminator! Ex: Vile#1234"
+            )
+            await ctx.send(embed=embed)
+            # await ctx.send("Provide the username with the discriminator! Ex: Vile#1234")
 
-    # @unban.error
-    # async def unban_error(self, ctx, error):
-    #     if isinstance(error, commands.MissingPermissions):
-    #         embed = nextcord.Embed(
-    #                 title=("Perission denied"),
-    #                 colour=(nextcord.Colour.random()), description=f"You don't have permissions to do that."
-    #             )
-    #         await ctx.send(embed=embed)
-    #         #await ctx.send("Not enough permissions to do that!")
+    @unban.error
+    async def unban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                    title=("Perission denied"),
+                    colour=(nextcord.Colour.random()), description=f"You don't have permissions to do that."
+                )
+            await ctx.send(embed=embed)
+            #await ctx.send("Not enough permissions to do that!")
 
     @commands.command()
     @commands.has_permissions(administrator=True)
