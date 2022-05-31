@@ -8,7 +8,7 @@ click==8.0.3
 cog-reloader==0.0.2
 colorama==0.4.4
 discord-custom-help==0.0.6
-discord.py==1.7.3
+nextcord==2.0.0a3
 idna==3.2
 import-expression==1.1.4
 jishaku==2.3.0
