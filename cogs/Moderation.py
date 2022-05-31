@@ -51,7 +51,7 @@ async def mute(ctx, user, reason):
             return await ctx.send("I have no permissions to make #hell")
             
             
-class Moderation:
+class Moderation(commands.Cog):
     """Commands used to moderate your guild"""
     
     def __init__(self, client):
