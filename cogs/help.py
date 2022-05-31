@@ -91,7 +91,7 @@ class Help(commands.Cog):
                               value=commands_desc, inline=False)
 
             # setting information about author
-            emb.add_field(name="About", value=f"The clients is developed by , based on discord.py.\n\
+            emb.add_field(name="About", value=f"The is is developed by {owner_name} , based on nextcord.\n\
                                     This version of it is maintained by {owner}")
             emb.set_footer(text=f"client is running {version}")
 
@@ -133,7 +133,7 @@ class Help(commands.Cog):
         else:
             emb = nextcord.Embed(title="It's a magical place.",
                                  description="I don't know how you got here. But I didn't see this coming at all.\n"
-                                 "Would you please be so kind to report that issue to me on github?\n"
+                                 "Would you please be so kind to report that issue to me on discord?\n"
                                  "@Itzme April†ᵇᵗᵒ💕#5500"
                                  "Thank you! TypicalWolf",
                                  color=nextcord.Color.red())
