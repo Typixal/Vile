@@ -1,142 +1,159 @@
-import nextcord
-import random
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
+
+# This prevents staff members from being punished
+
+
+class Sinner(commands.Converter):
+    async def convert(self, ctx, argument):
+        argument = await commands.MemberConverter().convert(ctx, argument)  # gets a member object
+        # can change into any permission
+        permission = argument.guild_permissions.manage_messages
+        if not permission:  # checks if user has the permission
+            return argument  # returns user object
+        else:
+            # tells user that target is a staff member
+            raise commands.BadArgument("You cannot punish other staff members")
+
+# Checks if you have a muted role
+
+
+# class Redeemed(commands.Converter):
+#     async def convert(self, ctx, argument):
+#         argument = await commands.MemberConverter().convert(ctx, argument)  # gets member object
+#         muted = discord.utils.get(
+#             ctx.guild.roles, name="Muted")  # gets role object
+#         if muted in argument.roles:  # checks if user has muted role
+#             return argument  # returns member object if there is muted role
+#         else:
+#             raise commands.BadArgument(
+#                 "The user was not muted.")  # self-explainatory
+
+# # Checks if there is a muted role on the server and creates one if there isn't
+
+
+# async def mute(ctx, user, reason):
+#     # retrieves muted role returns none if there isn't
+#     role = discord.utils.get(ctx.guild.roles, name="Muted")
+#     # retrieves channel named hell returns none if there isn't
+#     hell = discord.utils.get(ctx.guild.text_channels, name="hell")
+#     if not role:  # checks if there is muted role
+#         try:  # creates muted role
+#             muted = await ctx.guild.create_role(name="Muted", reason="To use for muting")
+#             for channel in ctx.guild.channels:  # removes permission to view and send in the channels
+#                 await channel.set_permissions(muted, send_messages=False,
+#                                               read_message_history=False,
+#                                               read_messages=False)
+#         except discord.Forbidden:
+#             # self-explainatory
+#             return await ctx.send("I have no permissions to make a muted role")
+#         await user.add_roles(muted)  # adds newly created muted role
+#         await ctx.send(f"{user.mention} has been sent to hell for {reason}")
+#     else:
+#         await user.add_roles(role)  # adds already existing muted role
+#         await ctx.send(f"{user.mention} has been sent to hell for {reason}")
+
+#     if not hell:  # checks if there is a channel named hell
+#         overwrites = {ctx.guild.default_role: discord.PermissionOverwrite(read_message_history=False),
+#                       ctx.guild.me: discord.PermissionOverwrite(send_messages=True),
+#                       muted: discord.PermissionOverwrite(read_message_history=True)}  # permissions for the channel
+#         try:  # creates the channel and sends a message
+#             channel = await ctx.create_channel('hell', overwrites=overwrites)
+#             await channel.send("Welcome to hell.. You will spend your time here until you get unmuted. Enjoy the silence.")
+#         except discord.Forbidden:
+#             return await ctx.send("I have no permissions to make #hell")
 
 
 class Moderation(commands.Cog):
+    """Commands used to moderate your guild"""
 
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def ban(self, ctx, member: nextcord.Member, *, reason=None):
-        await member.ban(reason=reason)
-        embed = nextcord.Embed(
-            title=("Banned!"),
-            colour=(nextcord.Colour.random()), description=f"User {member} has been banned!"
-        )
-        await ctx.send(embed=embed)
+    async def __error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            await ctx.send(error)
 
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def unban(self, ctx, *, member):
-        banned_users = await ctx.guild.bans()
-        member_name, member_discriminator = member.split("#")
+    @commands.command(aliases=["banish"])
+    @commands.has_permissions(ban_members=True)
+    async def ban(self, ctx, user: Sinner = None, reason=None):
+        """Casts users out of heaven."""
 
-        for ban_entry in banned_users:
-            user = ban_entry.user
-            if (user.name, user.discriminator) == (member_name, member_discriminator):
-                await ctx.guild.unban(user)
-                embed = nextcord.Embed(
-                    title=("Unabanned"),
-                    colour=(nextcord.Colour.random()), description=f"{user.mention} has been unbanned!"
-                )
-                await ctx.send(embed=embed)
-                return
+        if not user:  # checks if there is a user
+            return await ctx.send("You must specify a user")
+
+        try:  # Tries to ban user
+            await ctx.guild.ban(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified")
+            await ctx.send(f"{user.mention} was cast out of heaven for {reason}.")
+        except discord.Forbidden:
+            return await ctx.send("Are you trying to ban someone higher than the bot")
 
     @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def kick(self, ctx, member: nextcord.Member, *, reason=None):
-        await member.kick(reason=reason)
-        embed = nextcord.Embed(
-            title=("Kicked Member"),
-            colour=(nextcord.Colour.random()), description=f"User {member} has been kicked!"
-        )
-        await ctx.send(embed=embed)
-        # await ctx.send(f'User {member} has been kicked!')
+    async def softban(self, ctx, user: Sinner = None, reason=None):
+        """Temporarily restricts access to heaven."""
+
+        if not user:  # checks if there is a user
+            return await ctx.send("You must specify a user")
+
+        try:  # Tries to soft-ban user
+            await ctx.guild.ban(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified")
+            await ctx.guild.unban(user, "Temporarily Banned")
+        except discord.Forbidden:
+            return await ctx.send("Are you trying to soft-ban someone higher than the bot?")
+
+    # @commands.command()
+    # async def mute(self, ctx, user: Sinner, reason=None):
+    #     """Gives them hell."""
+    #     await mute(ctx, user, reason or "treason")  # uses the mute function
 
     @commands.command()
-    @commands.has_permissions(administrator=True)
+    async def kick(self, ctx, user: Sinner = None, reason=None):
+        if not user:  # checks if there is a user
+            return await ctx.send("You must specify a user")
+
+        try:  # tries to kick user
+            await ctx.guild.kick(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified")
+        except discord.Forbidden:
+            return await ctx.send("Are you trying to kick someone higher than the bot?")
+
+    @commands.command()
     async def purge(self, ctx, limit: int):
-        await ctx.channel.purge(limit=limit+1)
-        await ctx.message.delete()
-        embed = nextcord.Embed(
-            title=("Permission denied"),
-            colour=(nextcord.Colour.random()), description=f"Messages has been purged!", delete_after=5)
-        await ctx.send(embed=embed)
-        # await ctx.send('Messages has been purged by {}'.format(ctx.author.mention), delete_after=5)
+        """Bulk deletes messages"""
 
-    @purge.error
-    async def clear_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
-                title=("Permission denied"),
-                colour=(nextcord.Colour.random()), description=f"You cant do that!", delete_after=5)
-            await ctx.send(embed=embed)
-            # await ctx.send("You cant do that!", delete_after=5)
+        await ctx.purge(limit=limit + 1)  # also deletes your own message
+        await ctx.send(f"Bulk deleted `{limit}` messages")
 
-    @purge.error
-    async def clear_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            embed = nextcord.Embed(
-                title=("Missing required argument"),
-                colour=(nextcord.Colour.random()), description=f"Please specify the amount of messages to purge!", delete_after=5)
-            await ctx.send(embed=embed)
-            # await ctx.send('Please specify the amount of messages to purge!', delete_after=5)
+    # @commands.command()
+    # async def unmute(self, ctx, user: Redeemed):
+    #     """Unmutes a muted user"""
+    #     await user.remove_roles(discord.utils.get(ctx.guild.roles, name="Muted"))  # removes muted role
+    #     await ctx.send(f"{user.mention} has been unmuted")
 
-    @ban.error
-    async def ban_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
-                title=("Permission denied!"),
-                colour=(nextcord.Colour.random()), description=f"You dont have permissions to do that!"
-            )
-            await ctx.send(embed=embed)
+    @commands.command()
+    async def block(self, ctx, user: Sinner=None):
+        """
+        Blocks a user from chatting in current channel.
 
-    @ban.error
-    async def ban_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            embed = nextcord.Embed(
-                title=("Missing Argument"),
-                colour=(nextcord.Colour.random()), description=f"The command is used like : @user [Reason | optional]"
-            )
-            await ctx.send(embed=embed)
+        Similar to mute but instead of restricting access
+        to all channels it restricts in current channel.
+        """
 
-    @unban.error
-    async def unban_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            embed = nextcord.Embed(
-                title=("Missing Argument"),
-                colour=(nextcord.Colour.random()), description=f"Provide the username with the discriminator! Ex: Vile#1234"
-            )
-            await ctx.send(embed=embed)
-            # await ctx.send("Provide the username with the discriminator! Ex: Vile#1234")
+        if not user:  # checks if there is user
+            return await ctx.send("You must specify a user")
 
-    @unban.error
-    async def unban_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
-                title=("Perission denied"),
-                colour=(nextcord.Colour.random()), description=f"You don't have permissions to do that."
-            )
-            await ctx.send(embed=embed)
-            # await ctx.send("Not enough permissions to do that!")
+        # sets permissions for current channel
+        await ctx.set_permissions(user, send_messages=False)
 
-    @kick.error
-    async def kick_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
-                title=("Permission denied"),
-                colour=(nextcord.Colour.random()), description=f"You dont have permissions to do that!")
-            await ctx.send(embed=embed)
+    @commands.command()
+    async def unblock(self, ctx, user: Sinner=None):
+        """Unblocks a user from current channel"""
 
-    @kick.error
-    async def kick_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            embed = nextcord.Embed(
-                title=("Missing required argument"),
-                colour=(nextcord.Colour.random()), description=f"Mention the user to kick.")
-            await ctx.send(embed=embed)
+        if not user:  # checks if there is user
+            return await ctx.send("You must specify a user")
 
-    @kick.error
-    async def kick_error(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            embed = nextcord.Embed(
-                title=("Bot Missing Permissions"),
-                colour=(nextcord.Colour.random()), description=f"Bot is missing required permissions to do that!\n Make sure the bot's role is above the user's role you wan to kick\n Also make sure the bot has the requirement permissions : Kick Members")
-            await ctx.send(embed=embed)
+        # gives back send messages permissions
+        await ctx.set_permissions(user, send_messages=True)
 
 
-def setup(client):
-    client.add_cog(Moderation(client))
+def setup(bot):
+    bot.add_cog(Moderation(bot))
