@@ -4,11 +4,11 @@ import itertools
 import math
 import random
 
-import discord
-from discord import client
+import nextcord
+from nextcord import client
 import youtube_dl
 from async_timeout import timeout
-from discord.ext import commands
+from nextcord.ext import commands
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -22,7 +22,7 @@ class YTDLError(Exception):
     pass
 
 
-class YTDLSource(discord.PCMVolumeTransformer):
+class YTDLSource(nextcord.PCMVolumeTransformer):
     YTDL_OPTIONS = {
         'format': 'bestaudio/best',
         'extractaudio': True,
@@ -46,7 +46,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
 
-    def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
+    def __init__(self, ctx: commands.Context, source: nextcord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
         super().__init__(source, volume)
 
         self.requester = ctx.author
@@ -115,7 +115,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                     raise YTDLError(
                         'Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
 
-        return cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
+        return cls(ctx, nextcord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
 
     @staticmethod
     def parse_duration(duration: int):
@@ -144,10 +144,10 @@ class Song:
         self.requester = source.requester
 
     def create_embed(self):
-        embed = (discord.Embed(title='Now playing',
-                               description='```css\n{0.source.title}\n```'.format(
-                                   self),
-                               color=discord.Color.blurple())
+        embed = (nextcord.Embed(title='Now playing',
+                                description='```css\n{0.source.title}\n```'.format(
+                                    self),
+                                color=nextcord.Color.blurple())
                  .add_field(name='Duration', value=self.source.duration)
                  .add_field(name='Requested by', value=self.requester.mention)
                  .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
@@ -242,7 +242,7 @@ class VoiceState:
                 await self.current.source.channel.send(embed=self.current.create_embed())
 
             elif self.loop:
-                self.now == discord.FFmpegPCMAudio(
+                self.now == nextcord.FFmpegPCMAudio(
                     self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS)
                 self.voice.play(self.now, after=self.play_next_song)
 
@@ -311,7 +311,7 @@ class Music(commands.Cog):
 
     @commands.command(name='summon')
     @commands.has_permissions(manage_guild=True)
-    async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
+    async def _summon(self, ctx: commands.Context, *, channel: nextcord.VoiceChannel = None):
         """Summons the bot to a voice channel.
         If no channel was specified, it joins your channel.
         """
@@ -416,7 +416,7 @@ class Music(commands.Cog):
 
     @commands.command(name='forceskip', aliases=['fs', 'adms'])
     @commands.has_permissions(administrator=True)
-    async def _skip(self, ctx: commands.Context):
+    async def _forceskip(self, ctx: commands.Context):
         """Admins can skip songs.
         """
 
@@ -461,7 +461,7 @@ class Music(commands.Cog):
             queue += '`{0}.` [**{1.source.title}**]({1.source.url})\n'.format(
                 i + 1, song)
 
-        embed = (discord.Embed(description='**{} tracks:**\n\n{}'.format(len(ctx.voice_state.songs), queue))
+        embed = (nextcord.Embed(description='**{} tracks:**\n\n{}'.format(len(ctx.voice_state.songs), queue))
                  .set_footer(text='Viewing page {}/{}'.format(page, pages)))
         await ctx.send(embed=embed)
 
@@ -498,6 +498,7 @@ class Music(commands.Cog):
         ctx.voice_state.loop = not ctx.voice_state.loop
         await ctx.message.add_reaction('✅')
 
+
     @commands.command(name='play', aliases=['p'])
     async def _play(self, ctx: commands.Context, *, search: str):
         """Plays a song.
@@ -521,7 +522,6 @@ class Music(commands.Cog):
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
 
-
     @_join.before_invoke
     @_play.before_invoke
     async def ensure_voice_state(self, ctx: commands.Context):
@@ -535,13 +535,13 @@ class Music(commands.Cog):
                     'Bot is already in a voice channel.')
 
 
-bot = commands.Bot('music.', description='Yet another music bot.')
-bot.add_cog(Music(bot))
+# bot = commands.Bot('music.', description='Yet another music bot.')
+# bot.add_cog(Music(bot))
 
 
-@bot.event
-async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
+# @bot.event
+# async def on_ready():
+#     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 
 def setup(client):

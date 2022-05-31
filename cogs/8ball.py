@@ -1,12 +1,18 @@
-import discord
+from ast import alias
+from http import client
+import nextcord
 import random
-from discord.ext import commands
+from nextcord.ext import commands
+import asyncio
 
 
-class _8ball(commands.Cog):
+class Fun(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+
+    snipe_message_content = None
+    snipe_message_author = None
 
     @commands.command(aliases=['8ball'])
     async def _8ball(self, ctx, *, question):
@@ -30,9 +36,16 @@ class _8ball(commands.Cog):
                      "My sources say no.",
                      "Outlook not so good.",
                      "Very doubtful."]
-        await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+
+        embed = nextcord.Embed(
+            colour=(nextcord.Colour.random()), description=f"Question: {question}\nAnswer : {random.choice(responses)}")
+        embed.set_footer(
+            text=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
+        embed.set_author(
+            name=f"Asked by {ctx.author.name}")
+        await ctx.channel.send(embed=embed)
 
 
 def setup(client):
 
-    client.add_cog(_8ball(client))
+    client.add_cog(Fun(client))
