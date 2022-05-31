@@ -24,6 +24,7 @@ class Snipe(commands.Cog):
     @commands.command()
     @commands.has_any_role("Sniper", "Admin", "<3", "Admens", "M0ds")
     async def snipe(self, message):
+        """Snipe won't work unless you have either one of the roles: Sniper, Admin, <3, M0ds"""
         if snipe_message_content == None:
             await message.channel.send("There's nothing to snipe....")
 
