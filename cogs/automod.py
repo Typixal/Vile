@@ -2,7 +2,7 @@ import nextcord
 import asyncio
 from nextcord.ext import commands
 
-filtered_words = ["Nigga", "Nigger", "N1gga", "nigga", "nigger", "n1gger", "fak"]
+filtered_words = ["Nigga", "Nigger", "N1gga", "nigga", "nigger", "n1gger"]
 
 
 class Automod(commands.Cog):
